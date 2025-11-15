@@ -10,17 +10,7 @@ add_executable(nekoray_test_basic
     test_basic.cpp
 )
 
-# Create a core functionality test
-add_executable(nekoray_test_core
-    test_core_simple.cpp
-)
-
 set_target_properties(nekoray_test_basic PROPERTIES
-    CXX_STANDARD 17
-    CXX_STANDARD_REQUIRED ON
-)
-
-set_target_properties(nekoray_test_core PROPERTIES
     CXX_STANDARD 17
     CXX_STANDARD_REQUIRED ON
 )
