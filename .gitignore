@@ -70,13 +70,21 @@ Thumbs.db
 *.exe
 
 # Custom
-/nekoray
+# /nekoray  # 注释掉！源代码文件夹必须保留
 /build
+/build_*
 CMakeLists.txt.user*
 /cmake-build-*
-/build-*
 .vscode
 .idea
+
+# 只忽略特定的生成文件，保留源代码
+nekoray/**/*.o
+nekoray/**/*.moc
+nekoray/**/*.so
+nekoray/**/moc_*
+nekoray/**/ui_*
+nekoray/**/qrc_*
 
 # Deploy
 /deployment

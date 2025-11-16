@@ -1,0 +1,115 @@
+cmake_minimum_required(VERSION 3.16)
+
+project(nekoray_cli_complete VERSION 1.0 LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# 查找 Qt5 组件
+find_package(Qt5 REQUIRED COMPONENTS Core Network)
+
+# 核心源文件
+set(CORE_SOURCES
+    # 核心服务层
+    nekoray/core/NekoService_Fixed.cpp
+    nekoray/core/CoreManager_Fixed.cpp
+    nekoray/core/TunManager_Fixed.cpp
+    nekoray/core/ConfigManager.cpp
+    nekoray/core/SafetyUtils.cpp
+    
+    # 数据库和配置系统
+    nekoray/db/Database.cpp
+    nekoray/db/ConfigBuilder.cpp
+    nekoray/db/ProfileFilter.cpp
+    
+    # 协议格式支持
+    nekoray/fmt/AbstractBean.cpp
+    nekoray/fmt/Bean2CoreObj_box.cpp
+    nekoray/fmt/Bean2External.cpp
+    nekoray/fmt/Bean2Link.cpp
+    nekoray/fmt/Link2Bean.cpp
+    
+    # gRPC 通信
+    nekoray/rpc/gRPC.cpp
+    
+    # 系统集成
+    nekoray/sys/ExternalProcess.cpp
+    nekoray/sys/AutoRun.cpp
+    nekoray/sys/linux/LinuxCap.cpp
+    
+    # 订阅管理
+    nekoray/sub/GroupUpdater.cpp
+    
+    # 流量统计
+    nekoray/db/traffic/TrafficLooper.cpp
+    
+    # 第三方库
+    nekoray/3rdparty/base64.cpp
+    nekoray/3rdparty/qrcodegen.cpp
+    nekoray/3rdparty/QThreadCreateThread.hpp
+    nekoray/3rdparty/qv2ray/v3/components/GeositeReader/GeositeReader.cpp
+    nekoray/3rdparty/qv2ray/v3/components/GeositeReader/picoproto.cpp
+    nekoray/3rdparty/qv2ray/v2/components/proxy/QvProxyConfigurator.cpp
+    
+    # HTTP 工具
+    nekoray/main/HTTPRequestHelper.cpp
+    nekoray/main/NekoGui_Utils.cpp
+)
+
+# CLI 版本
+add_executable(nekoray-cli-complete
+    ${CORE_SOURCES}
+    nekoray/cli/main_cli.cpp
+)
+
+# Web 版本  
+add_executable(nekoray-web-complete
+    ${CORE_SOURCES}
+    nekoray/web/SimpleWebServer.cpp
+    nekoray/web/main_web.cpp
+)
+
+# 链接库
+target_link_libraries(nekoray-cli-complete Qt5::Core Qt5::Network)
+target_link_libraries(nekoray-web-complete Qt5::Core Qt5::Network)
+
+# 包含目录
+target_include_directories(nekoray-cli-complete PRIVATE 
+    nekoray 
+    nekoray/3rdparty
+    nekoray/3rdparty/qv2ray
+)
+target_include_directories(nekoray-web-complete PRIVATE 
+    nekoray 
+    nekoray/3rdparty
+    nekoray/3rdparty/qv2ray
+)
+
+# 编译属性
+set_target_properties(nekoray-cli-complete PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+    AUTOMOC ON
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+)
+
+set_target_properties(nekoray-web-complete PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+    AUTOMOC ON
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+)
+
+# 编译定义
+target_compile_definitions(nekoray-cli-complete PRIVATE
+    NKR_HEADLESS=1
+    NKR_CLI=1
+)
+
+target_compile_definitions(nekoray-web-complete PRIVATE
+    NKR_HEADLESS=1
+    NKR_WEB=1
+)
+
+message(STATUS "Building Complete NekoRay CLI with all components")
+message(STATUS "Total source files: ${CORE_SOURCES}")

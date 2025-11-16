@@ -1,0 +1,102 @@
+cmake_minimum_required(VERSION 3.16)
+
+project(nekoray_headless VERSION 1.0 LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# 查找 Qt5 组件
+find_package(Qt5 REQUIRED COMPONENTS Core Network)
+
+# 核心headless源文件
+set(HEADLESS_CORE_SOURCES
+    # 核心服务层 (简化headless版本 - 先用最基础的)
+    nekoray/core/NekoService_Fixed.cpp
+    nekoray/core/CoreManager_Fixed.cpp
+    nekoray/core/TunManager_Fixed.cpp
+    nekoray/core/ConfigManager.cpp
+    nekoray/core/SafetyUtils.cpp
+    
+    # 数据库系统 (headless版本)
+    nekoray/db/Database_Headless.cpp
+    
+    # 协议格式支持 (headless版本)
+    nekoray/fmt/AbstractBean_Headless.cpp
+    nekoray/fmt/SocksHttpBean_Headless.cpp
+    nekoray/fmt/ShadowSocksBean_Headless.cpp
+    nekoray/fmt/VMessBean_Headless.cpp
+    
+    # gRPC 通信 (headless版本)
+    nekoray/rpc/gRPC_Headless.cpp
+    
+    # 第三方库 (只包含需要的)
+    nekoray/3rdparty/base64.cpp
+)
+
+# CLI 版本
+add_executable(nekoray-cli-headless
+    ${HEADLESS_CORE_SOURCES}
+    nekoray/cli/main_cli_headless.cpp
+)
+
+# Web 版本  
+add_executable(nekoray-web-headless
+    ${HEADLESS_CORE_SOURCES}
+    nekoray/web/SimpleWebServer.cpp
+    nekoray/web/main_web.cpp
+)
+
+# 链接库
+target_link_libraries(nekoray-cli-headless Qt5::Core Qt5::Network)
+target_link_libraries(nekoray-web-headless Qt5::Core Qt5::Network)
+
+# 包含目录
+target_include_directories(nekoray-cli-headless PRIVATE 
+    nekoray 
+    nekoray/3rdparty
+    ${CMAKE_CURRENT_SOURCE_DIR}
+)
+target_include_directories(nekoray-web-headless PRIVATE 
+    nekoray 
+    nekoray/3rdparty
+    ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+# 编译属性
+set_target_properties(nekoray-cli-headless PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+    AUTOMOC ON
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+)
+
+set_target_properties(nekoray-web-headless PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+    AUTOMOC ON
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+)
+
+# 编译定义
+target_compile_definitions(nekoray-cli-headless PRIVATE
+    NKR_HEADLESS=1
+    NKR_CLI=1
+    QT_NO_KEYWORDS
+)
+
+target_compile_definitions(nekoray-web-headless PRIVATE
+    NKR_HEADLESS=1
+    NKR_WEB=1
+    QT_NO_KEYWORDS
+)
+
+# 安装规则
+install(TARGETS nekoray-cli-headless nekoray-web-headless
+    RUNTIME DESTINATION bin
+    COMPONENT Runtime
+)
+
+message(STATUS "Building Complete Headless NekoRay")
+message(STATUS "Source files: ${HEADLESS_CORE_SOURCES}")
+message(STATUS "Qt5 Core: ${Qt5Core_VERSION}")
+message(STATUS "Qt5 Network: ${Qt5Network_VERSION}")
