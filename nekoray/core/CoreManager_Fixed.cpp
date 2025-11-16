@@ -48,7 +48,7 @@ namespace NekoCore {
             qDebug() << "Running in SIMULATION MODE - for demonstration purposes";
             m_simulationMode = true;
         } else {
-            qDebug() << "Found core at:" << m_corePath;
+            qDebug() << "✅ Core ready:" << m_corePath;
             m_simulationMode = false;
         }
     }
