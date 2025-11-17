@@ -13,11 +13,41 @@
 
 ### 🚀 完整组件集
 
-#### 1. CLI界面 (nekoray-cli) - ✅ 完美
+#### 1. CLI界面 (nekoray-cli) - ✅ 完整GUI功能迁移
 ```bash
-./nekoray-cli status              # 立即响应，无挂起
+# 基础命令
+./nekoray-cli status              # 详细状态显示
 ./nekoray-cli start 1             # 启动代理配置
-./nekoray-cli tun-start           # 启动TUN模式
+./nekoray-cli tun start           # 启动TUN模式
+
+# 完整配置文件管理（等同GUI）
+./nekoray-cli profile list        # 列表显示所有配置文件
+./nekoray-cli profile add         # 交互式添加配置
+./nekoray-cli profile edit 1      # 交互式编辑配置
+./nekoray-cli profile import      # 导入配置文件/URL
+
+# 分组和订阅管理
+./nekoray-cli group list          # 订阅分组列表
+./nekoray-cli group add           # 添加订阅
+./nekoray-cli group update 1      # 更新订阅
+
+# 高级设置（完整GUI功能）
+./nekoray-cli config show         # 显示所有设置
+./nekoray-cli config edit         # 交互式设置编辑器
+./nekoray-cli import vmess <url>  # 导入VMess/VLESS/SS链接
+./nekoray-cli logs                # 系统日志
+./nekoray-cli stats               # 流量统计
+
+# 交互式模式（终端中的完整GUI）
+./nekoray-cli interactive         # 菜单驱动界面
+# 提供完整GUI功能的终端版本：
+# • 代理控制面板
+# • 配置文件管理系统
+# • 分组和订阅管理器
+# • TUN模式控制
+# • 系统设置编辑器
+# • 导入/导出工具
+# • 日志和统计查看器
 ```
 
 #### 2. Web界面 (nekoray-web) - ✅ 完整GUI迁移 + UTF-8修复
